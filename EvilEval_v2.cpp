@@ -4,7 +4,7 @@
 
 struct Node{
   char value;
-  int precedence;
+  double precedence;
   struct Node *next;
 };
 
@@ -31,7 +31,7 @@ void push(char data, int precedence){
   top = new_node;
 }
 
-void push_number(int data){
+void push_number(double data){
     Stack new_node;
 
     new_node = (Stack)malloc(sizeof(Node));
@@ -40,9 +40,9 @@ void push_number(int data){
     top_eva = new_node;
 }
 
-int pop_number(){
+double pop_number(){
   Stack ptr;
-  int temp;
+  double temp;
 
   ptr = top_eva;
   temp = ptr->precedence;
@@ -55,7 +55,7 @@ char pop(){
   Stack ptr;
   char temp;
   if(isEmpty()){
-    printf("Stack is empty!");
+    // printf("Stack is empty!");
     return '0';
   }
   else{
@@ -105,7 +105,7 @@ char* Infix_Postfix(){
     if(i==length-1){
       // printf("\nLast Round\n");
       while (top->value!='_') {
-        if(top->value == '('){break;}
+        if(top->value == '('){}
         output[j] = pop();
         // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
         if(j<length){j++;}
@@ -118,7 +118,7 @@ char* Infix_Postfix(){
 void Postfix_Evaluation(){
   char *input;
   int length;
-  double answer=0;
+  double answer;
   // int length = strlen
 
   input = Infix_Postfix();
@@ -126,13 +126,13 @@ void Postfix_Evaluation(){
   length = strlen(input);
   // printf("%s and length is : %d\n",input,length);
 
-  int front,back;
+  double front,back;
   for(int i=0;i<length;i++){
     if(input[i] >= '0'&&input[i] <= '9'){push_number(input[i]-'0');}
     else if(input[i] == '*' || input[i] =='/' || input[i] == '+' || input[i] == '-'){
-      back = pop_number();
-      front = pop_number();
-      // printf("Back is : %d\nFront is : %d",back,front);
+      back = pop_number()+0.0;
+      front = pop_number()+0.0;
+      // printf("\nBack is : %0.15f\nFront is : %0.15f\n",back,front);
       if(input[i] == '*'){answer = back * front;}
       else if(input[i] == '/'){answer = front / back;}    //除法小數可能有問題
       else if(input[i] == '+'){answer = back + front;}
