@@ -68,16 +68,15 @@ char pop(){
   }
 }
 
-char* Infix_Postfix(){
-  char input[1000000],*output;
+char* Infix_Postfix(char *input){
+  char *output;
   int input_precendence,j=0;
   push('_',-10);
-  scanf("%s",input);
   int length = strlen(input);
+  int HowManyTokens = length;
   output = (char*)malloc(sizeof(char)*length);
 
   for(int i=0;i<length;i++){
-    // printf("\nNow it is : %d round\n",i+1);
     if(input[i] >= '0'&&input[i] <= '9'){
       // printf("%d",input[i]-48);
       output[j] = input[i];
@@ -85,11 +84,11 @@ char* Infix_Postfix(){
       j++;
     }
     else if(input[i] == '*' || input[i] =='/' || input[i] == '+' || input[i] == '-'){
+      HowManyTokens++;
       if(input[i] == '*' || input[i] =='/'){input_precendence = 1;}
       else if(input[i] == '+' || input[i] == '-'){input_precendence = 0;}
       while(top->precedence >= input_precendence){
         output[j] = pop();
-        // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
         if(j<length){j++;}
         }
       push(input[i],input_precendence);
@@ -107,22 +106,23 @@ char* Infix_Postfix(){
       while (top->value!='_') {
         if(top->value == '('){}
         output[j] = pop();
-        // printf("\nThis is %d place in output : %c\n",j+1,output[j]);1+3
+        // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
         if(j<length){j++;}
       }
     }
   }
+  printf("\n\n-->How many tokens : %d\n",HowManyTokens);
   return output;
 }
 
-void Postfix_Evaluation(){
+void Postfix_Evaluation(char *input_main){
   char *input;
   int length;
   double answer;
   // int length = strlen
 
-  input = Infix_Postfix();
-
+  input = Infix_Postfix(input_main);
+  printf("\n\n-->%s\n\n",input);
   length = strlen(input);
   // printf("%s and length is : %d\n",input,length);
 
@@ -134,7 +134,7 @@ void Postfix_Evaluation(){
       front = pop_number()+0.0;
       // printf("\nBack is : %0.15f\nFront is : %0.15f\n",back,front);
       if(input[i] == '*'){answer = back * front;}
-      else if(input[i] == '/'){answer = front / back;}    //除法小數可能有問題
+      else if(input[i] == '/'){answer = front / back;}
       else if(input[i] == '+'){answer = back + front;}
       else if(input[i] == '-'){answer = front - back;}
       push_number(answer);
@@ -145,7 +145,12 @@ void Postfix_Evaluation(){
 }
 
 int main(){
-  Postfix_Evaluation();
+  char input_main[1000000];
+  while(scanf("%s",input_main)!=EOF){
+    Postfix_Evaluation(input_main);
+    // Infix_Postfix(input_main);
+  }
+
 
 
 
@@ -159,8 +164,3 @@ int main(){
 //Refference
 
 // https://lakesd6531.pixnet.net/blog/post/332858496
-
-//Problems
-  //1.除法小數
-  //2.Parentheses
-  //3.輸入的T是多少

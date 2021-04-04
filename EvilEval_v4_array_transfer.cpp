@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "math.h"
 
 typedef struct Node{
   char value;
@@ -12,6 +13,10 @@ typedef Node *Stack;
 Stack top = NULL;
 Stack top_eva = NULL;
 
+// Stack stack_initial(){
+//   Stack init = (Stack)malloc(sizeof(Node)*1000);
+//   return init;
+// }
 int isEmpty(){
   if(top==NULL){
     return 1;
@@ -21,6 +26,8 @@ int isEmpty(){
   }
 }
 
+// push(Stack stack, char data, int pre){
+//
 void push(char data, int precedence){
   Stack new_node;
 
@@ -51,6 +58,13 @@ double pop_number(){
   return temp;
 }
 
+void show_stack(){
+  while(top!=NULL){
+    printf("\n-->%c\n",top->value);
+    top = top->next;
+  }
+}
+
 char pop(){
   Stack ptr;
   char temp;
@@ -68,84 +82,112 @@ char pop(){
   }
 }
 
-char* Infix_Postfix(){
-  char input[1000000],*output;
+char* Infix_Postfix(char *input){
+  char output[1000000];
   int input_precendence,j=0;
   push('_',-10);
-  scanf("%s",input);
   int length = strlen(input);
-  output = (char*)malloc(sizeof(char)*length);
+  int HowManyTokens = length;
 
   for(int i=0;i<length;i++){
-    // printf("\nNow it is : %d round\n",i+1);
     if(input[i] >= '0'&&input[i] <= '9'){
-      // printf("%d",input[i]-48);
       output[j] = input[i];
-      // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
       j++;
     }
-    else if(input[i] == '*' || input[i] =='/' || input[i] == '+' || input[i] == '-'){
+    else if(input[i] >= 42 && input[i]<=47){
+      HowManyTokens++;
+      output[j] = ',';
+      j++;
       if(input[i] == '*' || input[i] =='/'){input_precendence = 1;}
       else if(input[i] == '+' || input[i] == '-'){input_precendence = 0;}
       while(top->precedence >= input_precendence){
         output[j] = pop();
-        // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
-        if(j<length){j++;}
+        j++;
         }
       push(input[i],input_precendence);
     }
-    else if(input[i] =='('){push('(',-20);}
+    else if(input[i] =='('){push('(',-200);HowManyTokens--;}
     else if(input[i] ==')'){
+      HowManyTokens--;
       while(top->value != '('){
       output[j] = pop();
-      // printf("\nThis is %d place in output : %c\n",j+1,output[j]);
-      if(j<length){j++;}}
+      j++;
+      }
+      pop();
     }
 
     if(i==length-1){
-      // printf("\nLast Round\n");
       while (top->value!='_') {
-        if(top->value == '('){}
+        if(top->value == '('){
+          // continue;
+        }
         output[j] = pop();
-        // printf("\nThis is %d place in output : %c\n",j+1,output[j]);1+3
-        if(j<length){j++;}
-      }
+        j++;}
+
     }
   }
-  return output;
+
+  char *transfer = (char*)malloc(sizeof(char)*HowManyTokens);
+  transfer[0] = HowManyTokens;
+  for(int i=0;i<HowManyTokens;i++){transfer[i+1]=output[i];}
+  return transfer;
 }
 
-void Postfix_Evaluation(){
+void Postfix_Evaluation(char *input_main){
   char *input;
-  int length;
+  int temp=0,sum=0;
   double answer;
-  // int length = strlen
 
-  input = Infix_Postfix();
+  input = Infix_Postfix(input_main);
 
-  length = strlen(input);
-  // printf("%s and length is : %d\n",input,length);
+  int HowManyTokens = input[0];
+  for(int i=1;i<=HowManyTokens;i++){printf("%c",input[i]);}
+
+  // printf("\n~~~%d\n",HowManyTokens);
 
   double front,back;
-  for(int i=0;i<length;i++){
-    if(input[i] >= '0'&&input[i] <= '9'){push_number(input[i]-'0');}
+  for(int i=1;i<=HowManyTokens;i++){
+    // printf("\nThis is %d Round :\n",i);
+    if(input[i] >= '1'&&input[i] <= '9'){
+      temp = (input[i] - '0');
+      sum = sum  * 10;
+      sum += temp;
+      // printf("\nNow temp is : %d and sum is %d\n",temp,sum);
+    }
+    else if(input[i] == '0'){sum *= 10;}
+    else if(input[i] == ','){
+      if(input[i-1]!='*'&&input[i-1]!='/'&&input[i-1]!='+'&&input[i-1]!='-'){
+        push_number(sum);
+        // printf("\nNow we push %d into stack\n",sum);
+      }
+      temp = 0;
+      sum = 0;}
     else if(input[i] == '*' || input[i] =='/' || input[i] == '+' || input[i] == '-'){
+      if(sum!=0){push_number(sum);sum = 0;}
       back = pop_number()+0.0;
       front = pop_number()+0.0;
       // printf("\nBack is : %0.15f\nFront is : %0.15f\n",back,front);
       if(input[i] == '*'){answer = back * front;}
-      else if(input[i] == '/'){answer = front / back;}    //除法小數可能有問題
+      else if(input[i] == '/'){answer = front / back;}
       else if(input[i] == '+'){answer = back + front;}
       else if(input[i] == '-'){answer = front - back;}
+      // printf("\nNow we push %lf into stack\n",answer);
       push_number(answer);
     }
+    else if(input[i] == ','){continue;}
+
   }
 
   printf("%0.15f\n",answer);
 }
 
 int main(){
-  Postfix_Evaluation();
+  char input_main[1000000];
+  while(scanf("%s",input_main)!=EOF){
+    Postfix_Evaluation(input_main);
+    // Infix_Postfix(input_main);
+  }
+
 
 
 
@@ -159,8 +201,3 @@ int main(){
 //Refference
 
 // https://lakesd6531.pixnet.net/blog/post/332858496
-
-//Problems
-  //1.除法小數
-  //2.Parentheses
-  //3.輸入的T是多少
