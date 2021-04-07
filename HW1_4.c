@@ -64,13 +64,14 @@ char pop(){
 
 }
 
-char* Infix_Postfix(char *input){
+char* Infix_Postfix(char *input,int length){
   char output[1000000];
   int input_precendence,j=0;
   push('_',-10);
-  int length = strlen(input);
+  // int length = strlen(input); //Problems!!
   int HowManyTokens = length;
-
+  // printf("\nWhile entering %d char :",HowManyTokens);
+  // printf("\n");
   for(int i=0;i<length;i++){
     if(input[i] >= '0'&&input[i] <= '9'){
       output[j] = input[i];
@@ -111,18 +112,19 @@ char* Infix_Postfix(char *input){
   return transfer;
 }
 
-void Postfix_Evaluation(char *input_main){
+void Postfix_Evaluation(char *input_main,int length){
   char *input;
   int temp=0,sum=0,howmanyDigits=0;
   double answer;
 
-  input = Infix_Postfix(input_main);
+  input = Infix_Postfix(input_main,length);
 
   int HowManyTokens = input[0];
+  // printf("\nIn the function the input like : ");
   // for(int i=1;i<=HowManyTokens;i++){printf("%c",input[i]);}
   // printf("\n\nAnd then is the calculation~\n\n");
 
-  // printf("\n~~~%d\n",HowManyTokens);
+  // printf("\\\\End if input\n~~~%d\n",HowManyTokens);
 
   double front,back;
   for(int i=1;i<=HowManyTokens;i++){
@@ -165,8 +167,26 @@ int main(){
   char *input;
   int i=0;
   while(scanf("%c",&input_main[i])!=EOF){
-        
+    if(input_main[i] == '\n'){
+      input = (char*)malloc(sizeof(char)*i);
+      // printf("\nStart!\n");
+      for(int j=0;j<i;j++){input[j] = input_main[j];}
+      // printf("\nEnding\n");
+      Postfix_Evaluation(input,i);
+      free(input); 
+      for(int j=0;j<i;j++){input_main[j] = ' ';}
+      i=0;
+    }
+    else
+    {
+      i++;
+    }
+    
   }
+
+  // Basic String Version
+  // while(scanf("%s",input_main)!=EOF){
+  //   Postfix_Evaluation(input_main);}
   return 0;
 }
 
