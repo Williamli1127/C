@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct NODE{
     int value;
@@ -7,7 +8,7 @@ typedef struct NODE{
     struct NODE *previous;
 }Node;
 
-void add_node(Node **start, int input){
+void add_node_tail(Node **start, int input){
     Node* new_node = (Node*)malloc(sizeof(Node));
     new_node->value = input;
     new_node->next = NULL;
@@ -24,7 +25,7 @@ void add_node(Node **start, int input){
             current = current->next;
         }
         current->next = new_node;
-        current->previous = current;
+        new_node->previous = current;
         return;
     }
 };
@@ -108,7 +109,7 @@ Node* cut(int l,int r,Node* head){
     while(head!=NULL){
         if(orders == l){triger = 1;}
         if(triger==1){
-            add_node(&output,head->value);
+            add_node_tail(&output,head->value);
             if(orders == r){break;}
         }
         orders++;
@@ -120,15 +121,16 @@ Node* cut(int l,int r,Node* head){
 }
 
 void Find_KLeast(int k,Node* start){
-    int initial=0,number_previous=-1;
+    int initial=0,number_previous=-1,answer;
     while(initial!=k){
         if(start->value != number_previous){
-            printf("%d ",start->value);
+            // printf("%d ",start->value);
             initial++;
             number_previous = start->value;
         }
         start = start->next;
     }
+    if(initial == k){printf("%d\n",number_previous);}
 }
 
 void sort(Node** start){
@@ -145,12 +147,11 @@ void sort(Node** start){
     }
 }
 
-void reverse(Node* head){
+void reverse(int l,int r,Node** head){
     printf("\nAfter reversing : ");
-    while(head!=NULL){
-        printf("!");
-        printf("%d ",head->value);
-        head = head->previous;
+    while((*head)!=NULL){
+        printf("%d ",(*head)->value);
+        (*head) = (*head)->previous;
     }
 }
 
@@ -164,73 +165,116 @@ int main(){
     int initial;
     Node *head = NULL;
     scanf("%d",&initial);
-    add_node(&head,initial);
+    add_node_tail(&head,initial);
 
     //Load other numbers
     for(int i=1;i<n;i++){
         // printf("---->%d\n",i+1);
         scanf("%d",&input);
-        add_node(&head,input);
+        add_node_tail(&head,input);
     }
 
     // sort
     // sort(&head);
 
     //Console
-    char console;
+    char console[20];
     for(int i =0;i<q;i++){
-      scanf(" %c", &console);
+    // printf("\nPlease enter your command!\n");
+    scanf(" %s", console);
 
-      switch (console) {
-        case 'd':{
-          scanf("%d",&j);
-          Delete(j,&head);
-          // print_list(head);
-          break;}
+    if(strcmp(console,"Delete")==0){
+        scanf("%d",&j);
+        Delete(j,&head);
+        // print_list(head);
+        }
 
-        case 'i':{
-          scanf("%d",&j);
-          scanf("%d",&k);
-          Insert(j,k,&head);
-          // printf("???");
-          // print_list(head);
-          break;}
+    else if(strcmp(console,"Insert")==0){
+        scanf("%d",&j);
+        scanf("%d",&k);
+        Insert(j,k,&head);
+        // printf("???");
+        // print_list(head);
+        }
+    else if(strcmp(console,"Query")==0){
+        scanf("%d",&l);
+        scanf("%d",&r);
+        scanf("%d",&k);
+        Node* temp = cut(l,r,head);
+        sort(&temp);
+        // printf("\nAfter sorting : ");
+        // print_list(temp);
+        // printf("\nThe answer is : ");
+        Find_KLeast(k,temp);
+        free(temp);
+        }
+    else if(strcmp(console,"Reverse")==0){
+        scanf("%d",&l);
+        scanf("%d",&r);
+        Node *temp_r = cut(l,r,head);
+        Node *last = temp_r;
+        while(last->next!=NULL){
+            last = last->next;
+        }
+        reverse(&last);
+        free(temp_r);
+        free(last);
+        }
+    }
 
-        case 'c':{
-          scanf("%d",&l);
-          scanf("%d",&r);
-          scanf("%d",&k);
-          Node* temp = cut(l,r,head);
-          sort(&temp);
-          printf("\nAfter sorting : ");
-          print_list(temp);
-          printf("\nThe answer is : ");
-          Find_KLeast(k,temp);
-          free(temp);
-          break;}
+    //   }
 
-        case 'r':{
-          scanf("%d",&l);
-          scanf("%d",&r);
-        //   Node *temp_r = cut(l,r,head);
-        //   Node *last = temp_r;
-        //   while(last->next!=NULL){
+    //   switch (console) {
+    //     case 'd':{
+    //       scanf("%d",&j);
+    //       Delete(j,&head);
+    //       // print_list(head);
+    //       break;}
+
+    //     case 'i':{
+    //       scanf("%d",&j);
+    //       scanf("%d",&k);
+    //       Insert(j,k,&head);
+    //       // printf("???");
+    //       // print_list(head);
+    //       break;}
+
+    //     case 'c':{
+    //       scanf("%d",&l);
+    //       scanf("%d",&r);
+    //       scanf("%d",&k);
+    //       Node* temp = cut(l,r,head);
+    //       sort(&temp);
+    //       printf("\nAfter sorting : ");
+    //       print_list(temp);
+    //       printf("\nThe answer is : ");
+    //       Find_KLeast(k,temp);
+    //       free(temp);
+    //       break;}
+
+    //     case 'r':{
+    //       scanf("%d",&l);
+    //       scanf("%d",&r);
+    //       Node *temp_r = cut(l,r,head);
+    //       Node *last = temp_r;
+    //       while(last->next!=NULL){
+    //           last = last->next;
+    //       }
+    //       reverse(last);
+    //       free(temp_r);
+    //       free(last);
+    //       break;}
+    //   }
+    // }
+
+
+    // printf("\nFor now, it is like...");
+    // print_list(head);
+    // Node* last = head;
+    // while(last->next!=NULL){
             //   last = last->next;
-        //   }
-        //   reverse(last);
-        //   free(temp_r);
-          break;}
-      }
-    }
-
-
-    printf("\nFor now, it is like...");
-    print_list(head);
-    Node* last = head;
-    while(last->next!=NULL){
-              last = last->next;
-    }
-    inverse_print_list(last);
+    // }
+    // inverse_print_list(last);
 
     free_list(head);
     return 0;
