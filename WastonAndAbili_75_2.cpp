@@ -8,11 +8,12 @@
 // https://zh.wikipedia.org/wiki/%E5%BC%82%E6%88%96%E9%93%BE%E8%A1%A8
 // https://www.techiedelight.com/xor-linked-list-overview-implementation-c-cpp/
 
-struct Node
+typedef struct Node
 {
     int value;
     struct Node* link;
-};
+}Node;
+
 typedef struct Node* track;
 
 track XOR(track x, track y) {
@@ -81,9 +82,9 @@ void migrate(Node** A_train,Node** B_train){
     } // previous == last && current == NULL
     *B_train = previous;
     (*A_train) = NULL;}
+
   else{
-    // printf("\nStart migrate\n");
-    Node *current = *B_train;
+    Node *current = *A_train;
     Node *previous = NULL;
     Node *next;
 
@@ -93,23 +94,13 @@ void migrate(Node** A_train,Node** B_train){
     previous = current;
     current = next;
     } // previous == last && current == NULL
-    // printf("\nFinished Reversing to the last\n");
 
     (*B_train)->link = XOR((*A_train),XOR(NULL,(*B_train)->link));
     (*A_train)->link = XOR((*B_train),XOR(NULL,(*A_train)->link));
 
-    while(previous!=NULL){
-      // printf("%d ",previous->value);
-      next = XOR(current,previous->link);
-      current = previous;
-      previous = next;
-    }
-
-    *B_train = current;
+    *B_train = previous;
     (*A_train) = NULL;
-    // free(*A_train);
   }
-  // printf("\nFinished Migrate\n");
 }
 
 void output(Node* target){

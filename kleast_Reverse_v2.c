@@ -125,11 +125,11 @@ Node* cut(int l,int r,Node* head){
 void Find_KLeast(int k,Node* start){
     int initial=0,number_previous=-1;
     while(initial!=k){
-        if(start->value != number_previous){
+        // if(start->value != number_previous){
             // printf("%d ",start->value);
             initial++;
             number_previous = start->value;
-        }
+        // }
         start = start->next;
     }
     if(initial == k){printf("%d\n",number_previous);}
@@ -151,22 +151,31 @@ void sort(Node** start){
 
 
 Node* reverse(int l ,int r,Node** head){
-  int orders=1,triger=0;
-  Node* current = *head;
-  Node* next = NULL;
-  Node* previous = NULL;
-  while(current!=NULL){
-    if(orders==l){triger=1;}
-    if(triger==1){
-      if(orders == r){triger=0;continue;}
-      next = current->next;
+    Node* previous = NULL;
+    Node* current = *head;
+    int orders=1;
+
+    while(current && (orders<l)){
+      previous = current;
+      current = current->next;
+      orders++;
+    }
+    Node* temp1 = previous;
+    Node* temp2 = current;
+
+    while(current && (orders<(r+1))){
+      Node* next = current->next;
       current->next = previous;
       previous = current;
       current = next;
+      orders++;
     }
-    else if(triger==0){current = current->next;}
-  }
-  return previous;
+
+    if(temp1 != NULL){temp1->next = previous;}
+    if(temp2 != NULL){temp2->next = current;}
+    if(l==1){(*head)=previous;}
+
+    return (*head);
 }
 
 int main(){
@@ -229,57 +238,11 @@ int main(){
 
         // print_list(temp);
         head = temp;
-        printf("\nNow HEAD looks like : ");
-        print_list(head);
-        free(temp);
+        // printf("\nNow HEAD looks like : ");
+        // print_list(head);
+        // free(temp);
         }
     }
-
-    //   }
-
-    //   switch (console) {
-    //     case 'd':{
-    //       scanf("%d",&j);
-    //       Delete(j,&head);
-    //       // print_list(head);
-    //       break;}
-
-    //     case 'i':{
-    //       scanf("%d",&j);
-    //       scanf("%d",&k);
-    //       Insert(j,k,&head);
-    //       // printf("???");
-    //       // print_list(head);
-    //       break;}
-
-    //     case 'c':{
-    //       scanf("%d",&l);
-    //       scanf("%d",&r);
-    //       scanf("%d",&k);
-    //       Node* temp = cut(l,r,head);
-    //       sort(&temp);
-    //       printf("\nAfter sorting : ");
-    //       print_list(temp);
-    //       printf("\nThe answer is : ");
-    //       Find_KLeast(k,temp);
-    //       free(temp);
-    //       break;}
-
-    //     case 'r':{
-    //       scanf("%d",&l);
-    //       scanf("%d",&r);
-    //       Node *temp_r = cut(l,r,head);
-    //       Node *last = temp_r;
-    //       while(last->next!=NULL){
-    //           last = last->next;
-    //       }
-    //       reverse(last);
-    //       free(temp_r);
-    //       free(last);
-    //       break;}
-    //   }
-    // }
-
 
     // printf("\nFor now, it is like...");
     // print_list(head);
